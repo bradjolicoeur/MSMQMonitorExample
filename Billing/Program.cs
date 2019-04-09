@@ -35,14 +35,7 @@ namespace Billing
             log = LogManager.GetLogger<Program>();
 
             //Configure NSB Endpoint
-            EndpointConfiguration endpointConfiguration = EndpointConfigurations.ConfigureNSB(serviceCollection, EndpointName);
-
-            var transport = endpointConfiguration.UseTransport<MsmqTransport>();
-
-            var routing = transport.Routing();
-            routing.RegisterPublisher(
-                assembly: typeof(IRecievedNewOrder).Assembly,
-                publisherEndpoint: "Sales");
+            var endpointConfiguration = EndpointConfigurations.ConfigureNSB(serviceCollection, EndpointName);
 
             //Start NSB Endpoint
             EndpointInstance = await Endpoint.Start(endpointConfiguration);

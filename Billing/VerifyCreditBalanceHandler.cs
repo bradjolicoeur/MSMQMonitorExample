@@ -21,11 +21,11 @@ namespace Billing
             // simulate work being done
             //Thread.Sleep(5000);
 
-            return context.Send("Sales", new CreditBalanceVerified
+            return context.Send<CreditBalanceVerified>(m =>
             {
-                OrderId = message.OrderId,
-                OrderDate = message.OrderDate,
-                Items = message.Items
+                m.OrderId = message.OrderId;
+                m.OrderDate = message.OrderDate;
+                m.Items = message.Items;
             });
         }
     }

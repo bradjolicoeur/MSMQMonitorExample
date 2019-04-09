@@ -45,11 +45,11 @@ namespace Sales
             Data.Items = message.Items;
             Data.OrderDate = message.OrderDate;
 
-            return context.Send("Shipping", new CalculateShippingCost
+            return context.Send<CalculateShippingCost>(m =>
             {
-                OrderId = message.OrderId,
-                OrderDate = message.OrderDate,
-                Items = message.Items
+                m.OrderId = message.OrderId;
+                m.OrderDate = message.OrderDate;
+                m.Items = message.Items;
             });
 
         }
@@ -58,12 +58,12 @@ namespace Sales
         {
             Data.ShippingCosts = (decimal?)message.ShippingCost;
 
-            return context.Send("Billing", new VerifyCreditBalance
+            return context.Send<VerifyCreditBalance>(m =>
             {
-                OrderId = message.OrderId,
-                OrderDate = message.OrderDate,
-                Items = message.Items,
-                ShippingCost = message.ShippingCost
+                m.OrderId = message.OrderId;
+                m.OrderDate = message.OrderDate;
+                m.Items = message.Items;
+                m.ShippingCost = message.ShippingCost;
             });
         }
 

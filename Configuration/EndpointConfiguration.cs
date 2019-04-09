@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using NServiceBus;
+using Shared.Messages.Events;
+using Shared.Messages.Commands;
 
 namespace Shared.Configuration
 {
@@ -18,17 +20,21 @@ namespace Shared.Configuration
                     frequency: TimeSpan.FromSeconds(15),
                     timeToLive: TimeSpan.FromSeconds(30));
 
+            #region Metrics Config...
             //metrics configuration for servicepulse 
-            var metrics = endpointConfiguration.EnableMetrics();
+            //var metrics = endpointConfiguration.EnableMetrics();
 
-            metrics.SendMetricDataToServiceControl(
-                serviceControlMetricsAddress: "particular.monitoring",
-                interval: TimeSpan.FromMinutes(1),
-                instanceId: "INSTANCE_ID_OPTIONAL");
+            //metrics.SendMetricDataToServiceControl(
+            //    serviceControlMetricsAddress: "particular.monitoring",
+            //    interval: TimeSpan.FromMinutes(1),
+            //    instanceId: "INSTANCE_ID_OPTIONAL");
+            #endregion
 
+            #region Perf Counter Config...
             //performance counter configuration
-            var performanceCounters = endpointConfiguration.EnableWindowsPerformanceCounters();
-            performanceCounters.EnableSLAPerformanceCounters(TimeSpan.FromSeconds(10));
+            //var performanceCounters = endpointConfiguration.EnableWindowsPerformanceCounters();
+            //performanceCounters.EnableSLAPerformanceCounters(TimeSpan.FromSeconds(10));
+            #endregion
 
             //configuring audit queue and error queue
             endpointConfiguration.AuditProcessedMessagesTo("audit"); //copy of message after processing will go here for servicecontroller
@@ -45,7 +51,18 @@ namespace Shared.Configuration
             var transport = endpointConfiguration.UseTransport<MsmqTransport>();
             transport.Transactions(TransportTransactionMode.TransactionScope);
 
+            var routing = transport.Routing();
+            routing.RouteToEndpoint(typeof(ProcessSale), "Sales");
+            routing.RouteToEndpoint(typeof(CalculateShippingCost), "Shipping");
+            routing.RouteToEndpoint(typeof(ShippingCosts), "Sales");
+            routing.RouteToEndpoint(typeof(VerifyCreditBalance), "Billing");
+            routing.RouteToEndpoint(typeof(CreditBalanceVerified), "Sales");
+            routing.RouteToEndpoint(typeof(OrderShipped), "Sales");
+            routing.RouteToEndpoint(typeof(OrderBilled), "Sales");
+            routing.RegisterPublisher(typeof(IRecievedNewOrder),"Sales");
+
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
+           
 
             var conventions = endpointConfiguration.Conventions();
             NSBConventions.ConfigureConventions(conventions);

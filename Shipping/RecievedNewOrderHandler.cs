@@ -19,11 +19,11 @@ namespace Shipping
 
             log.Info("Order Shipped");
 
-            return context.Send("Sales", new OrderShipped
+            return context.Send<OrderShipped>(m =>
             {
-                OrderId = message.OrderId,
-                OrderDate = message.OrderDate,
-                ShippedDate = DateTime.UtcNow
+                m.OrderId = message.OrderId;
+                m.OrderDate = message.OrderDate;
+                m.ShippedDate = DateTime.UtcNow;
             });
         }
     }

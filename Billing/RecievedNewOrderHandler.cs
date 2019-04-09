@@ -19,11 +19,11 @@ namespace Billing
 
             log.Info("Order Billed");
 
-            return context.Send("Sales", new OrderBilled
+            return context.Send<OrderBilled>(m =>  
             {
-                OrderId = message.OrderId,
-                OrderDate = message.OrderDate,
-                BilledDate = DateTime.UtcNow
+                m.OrderId = message.OrderId;
+                m.OrderDate = message.OrderDate;
+                m.BilledDate = DateTime.UtcNow;
             });
         }
     }

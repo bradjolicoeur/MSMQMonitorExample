@@ -19,11 +19,13 @@ namespace Shipping
 
             //throw new Exception("Force Exception for Demo");
 
-            return context.Send("Sales", new ShippingCosts {
-                OrderDate = message.OrderDate,
-                OrderId = message.OrderId,
-                Items = message.Items,
-                ShippingCost = message.Items.Sum(x => x.Price) * 0.2 });
+            return context.Send<ShippingCosts>(m => 
+            {
+                m.OrderDate = message.OrderDate;
+                m.OrderId = message.OrderId;
+                m.Items = message.Items;
+                m.ShippingCost = message.Items.Sum(x => x.Price) * 0.2; //simulate calculating shipping
+                });
         }
     }
 }
