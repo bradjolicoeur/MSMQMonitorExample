@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shared.Messages
+namespace Shared.Messages.Models
 {
     public class OrderBase : OrderHeaderBase, IOrderBase
     {

@@ -5,8 +5,7 @@ using System.Text;
 
 namespace Shared.Messages.Events
 {
-    public interface IRecievedNewOrder : IOrderBase, IContainShippingCost
+    public interface IPreapprovedCredit : IOrderBase
     {
-
     }
 }

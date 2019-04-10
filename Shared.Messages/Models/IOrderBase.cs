@@ -1,5 +1,5 @@
 ﻿
-namespace Shared.Messages
+namespace Shared.Messages.Models
 {
     public interface IOrderBase : IOrderHeaderBase
     {

@@ -54,9 +54,9 @@ namespace Shared.Configuration
             var routing = transport.Routing();
             routing.RouteToEndpoint(typeof(ProcessSale), "Sales");
             routing.RouteToEndpoint(typeof(CalculateShippingCost), "Shipping");
-            routing.RouteToEndpoint(typeof(ShippingCosts), "Sales");
-            routing.RouteToEndpoint(typeof(VerifyCreditBalance), "Billing");
-            routing.RouteToEndpoint(typeof(CreditBalanceVerified), "Sales");
+            routing.RegisterPublisher(typeof(ICalculatedShippingCosts), "Shipping");
+            routing.RouteToEndpoint(typeof(PreapproveAvailableCredit), "Billing");
+            routing.RegisterPublisher(typeof(IPreapprovedCredit), "Billing");
             routing.RouteToEndpoint(typeof(OrderShipped), "Sales");
             routing.RouteToEndpoint(typeof(OrderBilled), "Sales");
             routing.RegisterPublisher(typeof(IRecievedNewOrder),"Sales");

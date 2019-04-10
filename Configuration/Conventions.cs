@@ -35,6 +35,10 @@ namespace Shared.Configuration
                 {
                     return type.Name.EndsWith("Express");
                 });
+            //conventions.DefiningEncryptedPropertiesAs(p =>
+            //{
+            //    return p.Name.EndsWith("Secret");
+            //});
             conventions.DefiningTimeToBeReceivedAs(
                 type =>
                 {

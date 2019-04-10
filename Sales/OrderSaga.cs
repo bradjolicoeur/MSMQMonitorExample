@@ -2,6 +2,7 @@
 using NServiceBus.Logging;
 using Shared.Messages.Commands;
 using Shared.Messages.Events;
+using Shared.Messages.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,8 @@ namespace Sales
     public class OrderSaga :
         Saga<OrderSagaData>,
         IAmStartedByMessages<ProcessSale>,
-        IHandleMessages<ShippingCosts>,
-        IHandleMessages<CreditBalanceVerified>,
+        IHandleMessages<ICalculatedShippingCosts>,
+        IHandleMessages<IPreapprovedCredit>,
         IHandleMessages<OrderBilled>,
         IHandleMessages<OrderShipped>
     {
@@ -25,10 +26,10 @@ namespace Sales
             mapper.ConfigureMapping<ProcessSale>(message => message.OrderId)
              .ToSaga(sagaData => sagaData.OrderId);
 
-            mapper.ConfigureMapping<ShippingCosts>(message => message.OrderId)
+            mapper.ConfigureMapping<ICalculatedShippingCosts>(message => message.OrderId)
                 .ToSaga(sagaData => sagaData.OrderId);
 
-            mapper.ConfigureMapping<CreditBalanceVerified>(message => message.OrderId)
+            mapper.ConfigureMapping<IPreapprovedCredit>(message => message.OrderId)
                 .ToSaga(sagaData => sagaData.OrderId);
 
             mapper.ConfigureMapping<OrderShipped>(message => message.OrderId)
@@ -47,27 +48,27 @@ namespace Sales
 
             return context.Send<CalculateShippingCost>(m =>
             {
-                m.OrderId = message.OrderId;
-                m.OrderDate = message.OrderDate;
-                m.Items = message.Items;
+                m.OrderId = Data.OrderId;
+                m.OrderDate = Data.OrderDate;
+                m.Items = Data.Items;
             });
 
         }
 
-        public Task Handle(ShippingCosts message, IMessageHandlerContext context)
+        public Task Handle(ICalculatedShippingCosts message, IMessageHandlerContext context)
         {
-            Data.ShippingCosts = (decimal?)message.ShippingCost;
+            Data.ShippingCosts = (double?)message.ShippingCost;
 
-            return context.Send<VerifyCreditBalance>(m =>
+            return context.Send<PreapproveAvailableCredit>(m =>
             {
-                m.OrderId = message.OrderId;
-                m.OrderDate = message.OrderDate;
-                m.Items = message.Items;
-                m.ShippingCost = message.ShippingCost;
+                m.OrderId = Data.OrderId;
+                m.OrderDate = Data.OrderDate;
+                m.Items = Data.Items;
+                m.ShippingCost = Data.ShippingCosts.Value;
             });
         }
 
-        public Task Handle(CreditBalanceVerified message, IMessageHandlerContext context)
+        public Task Handle(IPreapprovedCredit message, IMessageHandlerContext context)
         {
             log.Info("Credit Balance is Verified");
 
@@ -76,10 +77,10 @@ namespace Sales
             return context.Publish<IRecievedNewOrder>(
                 messageConstructor: m =>
                 {
-                    m.OrderId = message.OrderId;
-                    m.OrderDate = message.OrderDate;
-                    m.Items = message.Items;
-                    m.ShippingCost = Data.ShippingCosts.Value;
+                    m.OrderId = Data.OrderId;
+                    m.OrderDate = Data.OrderDate;
+                    m.Items = Data.Items;
+                    m.ShippingCost = Data.ShippingCosts != null ? Data.ShippingCosts.Value : 0.0;
                 });
 
         }

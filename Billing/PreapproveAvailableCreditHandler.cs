@@ -7,21 +7,22 @@ using System.Threading.Tasks;
 using NServiceBus;
 using NServiceBus.Logging;
 using Shared.Messages.Commands;
+using Shared.Messages.Events;
 
 namespace Billing
 {
-    public class VerifyCreditBalanceHandler : IHandleMessages<VerifyCreditBalance>
+    public class PreapproveAvailableCreditHandler : IHandleMessages<PreapproveAvailableCredit>
     {
         static ILog log = LogManager.GetLogger<RecievedNewOrderHandler>();
 
-        public Task Handle(VerifyCreditBalance message, IMessageHandlerContext context)
+        public Task Handle(PreapproveAvailableCredit message, IMessageHandlerContext context)
         {
-            log.Info("Verify Credit Balance");
+            log.Info("Preapprove Credit Balance");
 
             // simulate work being done
             //Thread.Sleep(5000);
 
-            return context.Send<CreditBalanceVerified>(m =>
+            return context.Publish<IPreapprovedCredit>(m =>
             {
                 m.OrderId = message.OrderId;
                 m.OrderDate = message.OrderDate;

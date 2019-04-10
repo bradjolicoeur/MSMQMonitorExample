@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using NServiceBus;
 using NServiceBus.Logging;
 using Shared.Messages.Commands;
+using Shared.Messages.Events;
+using Shared.Messages.Models;
 
 namespace Shipping
 {
@@ -19,7 +21,7 @@ namespace Shipping
 
             //throw new Exception("Force Exception for Demo");
 
-            return context.Send<ShippingCosts>(m => 
+            return context.Publish<ICalculatedShippingCosts>(m => 
             {
                 m.OrderDate = message.OrderDate;
                 m.OrderId = message.OrderId;

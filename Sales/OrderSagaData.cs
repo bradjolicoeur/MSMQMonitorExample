@@ -1,5 +1,6 @@
 ﻿using NServiceBus;
 using Shared.Messages;
+using Shared.Messages.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Sales
     {
         public bool Shipped { get; set; }
         public bool Billed { get; set; }
-        public decimal? ShippingCosts { get; set; }
+        public double? ShippingCosts { get; set; }
         public bool CreditBalanceChecked { get; set; }
 
 
