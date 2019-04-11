@@ -19,7 +19,7 @@ namespace Billing
 
             log.Info("Order Billed");
 
-            return context.Send<OrderBilled>(m =>  
+            return context.Publish<IBilledOrder>(m =>  
             {
                 m.OrderId = message.OrderId;
                 m.OrderDate = message.OrderDate;

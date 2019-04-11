@@ -16,8 +16,8 @@ namespace Sales
         IAmStartedByMessages<ProcessSale>,
         IHandleMessages<ICalculatedShippingCosts>,
         IHandleMessages<IPreapprovedCredit>,
-        IHandleMessages<OrderBilled>,
-        IHandleMessages<OrderShipped>
+        IHandleMessages<IBilledOrder>,
+        IHandleMessages<IShippedOrder>
     {
         static ILog log = LogManager.GetLogger<OrderSaga>();
 
@@ -32,10 +32,10 @@ namespace Sales
             mapper.ConfigureMapping<IPreapprovedCredit>(message => message.OrderId)
                 .ToSaga(sagaData => sagaData.OrderId);
 
-            mapper.ConfigureMapping<OrderShipped>(message => message.OrderId)
+            mapper.ConfigureMapping<IShippedOrder>(message => message.OrderId)
                 .ToSaga(sagaData => sagaData.OrderId);
 
-            mapper.ConfigureMapping<OrderBilled>(message => message.OrderId)
+            mapper.ConfigureMapping<IBilledOrder>(message => message.OrderId)
                 .ToSaga(sagaData => sagaData.OrderId);
         }
 
@@ -85,7 +85,7 @@ namespace Sales
 
         }
 
-        public Task Handle(OrderBilled message, IMessageHandlerContext context)
+        public Task Handle(IBilledOrder message, IMessageHandlerContext context)
         {
             log.Info("Order Billed");
 
@@ -94,7 +94,7 @@ namespace Sales
             return Task.CompletedTask;
         }
 
-        public Task Handle(OrderShipped message, IMessageHandlerContext context)
+        public Task Handle(IShippedOrder message, IMessageHandlerContext context)
         {
             log.Info("Order Shipped");
 

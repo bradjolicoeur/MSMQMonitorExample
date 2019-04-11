@@ -19,7 +19,7 @@ namespace Shipping
 
             log.Info("Order Shipped");
 
-            return context.Send<OrderShipped>(m =>
+            return context.Publish<IShippedOrder>(m =>
             {
                 m.OrderId = message.OrderId;
                 m.OrderDate = message.OrderDate;
