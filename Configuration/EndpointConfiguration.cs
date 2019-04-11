@@ -57,8 +57,8 @@ namespace Shared.Configuration
             routing.RegisterPublisher(typeof(ICalculatedShippingCosts), "Shipping");
             routing.RouteToEndpoint(typeof(PreapproveAvailableCredit), "Billing");
             routing.RegisterPublisher(typeof(IPreapprovedCredit), "Billing");
-            routing.RegisterPublisher(typeof(IShippedOrder), "Sales");
-            routing.RegisterPublisher(typeof(IBilledOrder), "Sales");
+            routing.RegisterPublisher(typeof(IShippedOrder), "Shipping");
+            routing.RegisterPublisher(typeof(IBilledOrder), "Billing");
             routing.RegisterPublisher(typeof(IRecievedNewOrder),"Sales");
 
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
